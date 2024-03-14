@@ -1,79 +1,45 @@
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        List<Laptop> laptops = new ArrayList<>();
+        laptops.add(new Laptop("Asus", 8, 512, "Windows", "Black"));
+        laptops.add(new Laptop("HP", 16, 256, "Linux", "Gray"));
+        laptops.add(new Laptop("Dell", 16, 1024, "Windows", "Silver"));
 
-        Set<Laptop> laptops = new HashSet<>();
-
-        Laptop lt0 = new Laptop("Aplle Air UltraMegaMax Pro", "Golden", "MacOS", 8, 512);
-        Laptop lt1 = new Laptop("Gigabyte G5", "Black", "Windows 10", 16, 512);
-        Laptop lt2 = new Laptop("Asus a515", "White", "Ubuntu 20.04.4", 4, 256);
-
-        laptops.add(lt0);
-        laptops.add(lt1);
-        laptops.add(lt2);
-
-        filterAndPrint(getUserFilteringCriterion(), getMinFilterValue(), laptops);
-    }
-
-    public static int getUserFilteringCriterion() {
         Scanner scanner = new Scanner(System.in);
+        Map<String, Object> criteria = new HashMap<>();
 
-        System.out.println("Выберите нужный критерий(введите соответствующую цифру):");
-        System.out.println("1 - Модель");
-        System.out.println("2 - Цвет");
-        System.out.println("3 - Операционная система");
-        System.out.println("4 - ОЗУ");
-        System.out.println("5 - объем ЖД");
+        System.out.println("Введите критерии фильтрации:");
 
-        int criterion = scanner.nextInt();
+        System.out.print("Введите операционную систему: ");
+        String os = scanner.nextLine();
+        criteria.put("OperatingSystem", os);
 
-        return criterion;
-    }
+        System.out.print("Введите минимальный объем ОЗУ: ");
+        int ram = scanner.nextInt();
+        criteria.put("RAM", ram);
 
-    public static String getMinFilterValue() {
-        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите минимальный объем жесткого диска: ");
+        int storage = scanner.nextInt();
+        criteria.put("Storage", storage);
 
-        System.out.println("Введите минимальное значение выбранного критерия: ");
+        System.out.print("Введите цвет: ");
+        scanner.nextLine();
+        String color = scanner.nextLine();
+        criteria.put("Color", color);
 
-        String minValue = scanner.nextLine();
-        scanner.close();
-        return minValue;
-    }
+        List<Laptop> result = Laptop.filter(laptops, criteria);
 
-    public static void filterAndPrint(int criterion, String value, Set<Laptop> laptops) {
-        for (Laptop laptop : laptops) {
-            switch (criterion) {
-                case 1:
-                    if (laptop.getModel().toLowerCase().contains(value.toLowerCase())) {
-                        System.out.println(laptop);
-                    }
-                    break;
-                case 2:
-                    if (laptop.getColor().toLowerCase().contains(value.toLowerCase())) {
-                        System.out.println(laptop);
-                    }
-                    break;
-                case 3:
-                    if (laptop.getOs().toLowerCase().contains(value.toLowerCase())) {
-                        System.out.println(laptop);
-                    }
-                    break;
-                case 4:
-                    if (laptop.getRam() >= Integer.parseInt(value)) {
-                        System.out.println(laptop);
-                    }
-                    break;
-                case 5:
-                    if (laptop.getHdd() >= Integer.parseInt(value)) {
-                        System.out.println(laptop);
-                    }
-                    break;
-                default:
-                    continue;
-
+        if (result.isEmpty()) {
+            System.out.println("Ноутбука, соответствующего заданным критериям, не найдено.");
+        } else {
+            System.out.print("Результаты поиска: ");
+            for (Laptop laptop : result) {
+                System.out.println(laptop.getModel());
             }
         }
     }
