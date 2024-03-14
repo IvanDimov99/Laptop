@@ -1,96 +1,81 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.*;
 
-class Laptop {
+public class Laptop {
     private String model;
-    private String color;
-    private String os;
     private int ram;
-    private int hdd;
+    private int storage;
+    private String operatingSystem;
+    private String color;
 
-    public Laptop(String model, String color, String os, int ram, int hdd) {
+    public Laptop(String model, int ram, int storage, String operatingSystem, String color) {
         this.model = model;
-        this.color = color;
-        this.os = os;
         this.ram = ram;
-        this.hdd = hdd;
-    }
-
-    public static List<String> propForFilter() {
-        List<String> list = new ArrayList<>();
-        list.add("модель");
-        list.add("цвет");
-        list.add("операционная работа");
-        list.add("оперативная память");
-        list.add("жесткий диск");
-
-        return list;
+        this.storage = storage;
+        this.operatingSystem = operatingSystem;
+        this.color = color;
     }
 
     public String getModel() {
         return model;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public int getRam() {
+        return ram;
+    }
+
+    public int getStorage() {
+        return storage;
+    }
+
+    public String getOperatingSystem() {
+        return operatingSystem;
     }
 
     public String getColor() {
         return color;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
+    public static List<Laptop> filter(List<Laptop> laptops, Map<String, Object> criteria) {
+        List<Laptop> result = new ArrayList<>();
 
-    public String getOs() {
-        return os;
-    }
+        for (Laptop laptop : laptops) {
+            boolean matches = true;
+            for (Map.Entry<String, Object> entry : criteria.entrySet()) {
+                String criterion = entry.getKey();
+                Object value = entry.getValue();
+                switch (criterion) {
+                    case "RAM":
+                        if (laptop.getRam() < (int) value) {
+                            matches = false;
+                        }
+                        break;
+                    case "Storage":
+                        if (laptop.getStorage() < (int) value) {
+                            matches = false;
+                        }
+                        break;
+                    case "OperatingSystem":
+                        if (!laptop.getOperatingSystem().equals(value)) {
+                            matches = false;
+                        }
+                        break;
+                    case "Color":
+                        if (!laptop.getColor().equals(value)) {
+                            matches = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (matches) {
+                result.add(laptop);
+            }
+        }
 
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public int getRam() {
-        return ram;
-    }
-
-    public void setRam(int ram) {
-        this.ram = ram;
-    }
-
-    public int getHdd() {
-        return hdd;
-    }
-
-    public void setHdd(int hdd) {
-        this.hdd = hdd;
-    }
-
-    @Override
-    public String toString() {
-        return "Laptop {" +
-                "модель -> " + model +
-                "; цвет -> " + color +
-                "; операционная система -> " + os +
-                "; оперативная память -> " + ram +
-                "; жесткий диск -> " + hdd +
-                "}";
-    }
-
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        Laptop laptop = (Laptop) obj;
-        return laptop.model.equals(model) && laptop.color.equals(color) &&
-                laptop.os.equals(os) && laptop.ram == ram &&
-                laptop.hdd == hdd;
-    }
-
-    public int hashCode() {
-        return Objects.hash(model, color, os, ram, hdd);
+        return result;
     }
 }
